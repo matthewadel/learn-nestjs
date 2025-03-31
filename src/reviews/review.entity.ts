@@ -1,30 +1,28 @@
-import { Review } from 'src/reviews/review.entity';
+import { Product } from 'src/products/product.entity';
 import { User } from 'src/users/user.entitty';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToMany,
-  OneToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity({ name: 'products' })
-export class Product {
+@Entity({ name: 'reviews' })
+export class Review {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column()
   title: string;
-  @Column()
-  description: string;
-  @Column()
-  price: number;
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
   })
   createdAt: Date;
+
   @UpdateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
@@ -32,9 +30,9 @@ export class Product {
   })
   updatedAt: Date;
 
-  @OneToMany(() => Review, (review) => review.product)
-  reviews: Review[];
+  @ManyToOne(() => Product, (product) => product.reviews)
+  product: Product;
 
-  @ManyToMany(() => User, (user) => user.products)
+  @ManyToOne(() => User, (user) => user.reviews)
   user: User;
 }

@@ -5,6 +5,8 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Product } from './products/product.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Review } from './reviews/review.entity';
+import { User } from './users/user.entitty';
 
 @Module({
   imports: [
@@ -22,7 +24,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           port: parseInt(config.get<string>('DB_PORT') || '', 10),
           host: 'localhost',
           synchronize: true,
-          entities: [Product],
+          entities: [Product, User, Review],
         };
       },
     }),
