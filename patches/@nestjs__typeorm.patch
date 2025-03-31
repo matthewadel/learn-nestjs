@@ -1,0 +1,25 @@
+diff --git a/dist/common/typeorm.utils.js b/dist/common/typeorm.utils.js
+index ac6eeb19a71a495ac0a53a900d9157f2eac8e704..fc7e9d5ed9b3b7be2668a400f64be062669ab58e 100644
+--- a/dist/common/typeorm.utils.js
++++ b/dist/common/typeorm.utils.js
+@@ -13,6 +13,7 @@ const operators_1 = require("rxjs/operators");
+ const typeorm_1 = require("typeorm");
+ const circular_dependency_exception_1 = require("../exceptions/circular-dependency.exception");
+ const typeorm_constants_1 = require("../typeorm.constants");
++const { webcrypto } = require('node:crypto');
+ const logger = new common_1.Logger('TypeOrmModule');
+ /**
+  * This function generates an injection token for an Entity or Repository
+@@ -120,5 +121,11 @@ function handleRetry(retryAttempts = 9, retryDelay = 3000, dataSourceName = type
+ function getDataSourceName(options) {
+     return options && options.name ? options.name : typeorm_constants_1.DEFAULT_DATA_SOURCE_NAME;
+ }
+-const generateString = () => crypto.randomUUID();
++const generateString = () => {
++    if (!(globalThis).crypto) {
++        (globalThis).crypto = webcrypto;
++    }
++    crypto.randomUUID()
++};
++
+ exports.generateString = generateString;

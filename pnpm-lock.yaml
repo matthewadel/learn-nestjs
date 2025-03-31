@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  '@nestjs/typeorm':
+    hash: 95ae63cbc324589fe98c2c7e435e5e2e4b94da2a533ec5c0d82a90fe32a612a9
+    path: patches/@nestjs__typeorm.patch
+
 importers:
 
   .:
@@ -22,7 +27,7 @@ importers:
         version: 11.0.12(@nestjs/common@11.0.12(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.0.12)
       '@nestjs/typeorm':
         specifier: ^11.0.0
-        version: 11.0.0(@nestjs/common@11.0.12(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.0.12)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@0.3.21(pg@8.14.1)(reflect-metadata@0.2.2)(ts-node@10.9.2(@swc/core@1.11.13)(@types/node@22.13.14)(typescript@5.8.2)))
+        version: 11.0.0(patch_hash=95ae63cbc324589fe98c2c7e435e5e2e4b94da2a533ec5c0d82a90fe32a612a9)(@nestjs/common@11.0.12(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.0.12)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@0.3.21(pg@8.14.1)(reflect-metadata@0.2.2)(ts-node@10.9.2(@swc/core@1.11.13)(@types/node@22.13.14)(typescript@5.8.2)))
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -4472,7 +4477,7 @@ snapshots:
     optionalDependencies:
       '@nestjs/platform-express': 11.0.12(@nestjs/common@11.0.12(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.0.12)
 
-  '@nestjs/typeorm@11.0.0(@nestjs/common@11.0.12(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.0.12)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@0.3.21(pg@8.14.1)(reflect-metadata@0.2.2)(ts-node@10.9.2(@swc/core@1.11.13)(@types/node@22.13.14)(typescript@5.8.2)))':
+  '@nestjs/typeorm@11.0.0(patch_hash=95ae63cbc324589fe98c2c7e435e5e2e4b94da2a533ec5c0d82a90fe32a612a9)(@nestjs/common@11.0.12(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.0.12)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@0.3.21(pg@8.14.1)(reflect-metadata@0.2.2)(ts-node@10.9.2(@swc/core@1.11.13)(@types/node@22.13.14)(typescript@5.8.2)))':
     dependencies:
       '@nestjs/common': 11.0.12(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/core': 11.0.12(@nestjs/common@11.0.12(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.0.12)(reflect-metadata@0.2.2)(rxjs@7.8.2)

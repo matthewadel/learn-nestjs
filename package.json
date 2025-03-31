@@ -77,5 +77,10 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@nestjs/typeorm": "patches/@nestjs__typeorm.patch"
+    }
   }
 }
