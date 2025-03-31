@@ -29,9 +29,6 @@ importers:
       class-validator:
         specifier: ^0.14.1
         version: 0.14.1
-      patch-package:
-        specifier: ^8.0.0
-        version: 8.0.0
       pg:
         specifier: ^8.14.1
         version: 8.14.1
@@ -93,6 +90,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.13.14)(ts-node@10.9.2(@swc/core@1.11.13)(@types/node@22.13.14)(typescript@5.8.2))
+      patch-package:
+        specifier: ^8.0.0
+        version: 8.0.0
       prettier:
         specifier: ^3.4.2
         version: 3.5.3
