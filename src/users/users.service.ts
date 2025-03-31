@@ -1,3 +1,4 @@
+import { UserType } from './../utils/enums';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { RegisterDto } from './dtos/register.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -5,12 +6,14 @@ import { User } from './user.entitty';
 import { Repository } from 'typeorm';
 import * as bcryprt from 'bcryptjs';
 import { LoginDto } from './dtos/login.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersServices {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    private readonly jwtService: JwtService,
   ) {}
 
   /**
@@ -30,7 +33,13 @@ export class UsersServices {
       ...registerDto,
       password: hasedPassword,
     });
-    return await this.usersRepository.save(newUser);
+    await this.usersRepository.save(newUser);
+
+    const accessToken = await this.generateJWT({
+      id: newUser.id,
+      userType: newUser.userType,
+    });
+    return { accessToken };
   }
 
   public async login(loginDto: LoginDto) {
@@ -46,6 +55,18 @@ export class UsersServices {
 
     if (!isPasswordCorrect)
       throw new BadRequestException('invalid email or password');
-    return user;
+
+    const accessToken = await this.generateJWT({
+      id: user.id,
+      userType: user.userType,
+    });
+    return { accessToken };
+  }
+
+  private async generateJWT(payload: {
+    id: number;
+    userType: UserType;
+  }): Promise<string> {
+    return await this.jwtService.signAsync(payload);
   }
 }
