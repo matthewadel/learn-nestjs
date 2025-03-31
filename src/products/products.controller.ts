@@ -17,13 +17,13 @@ export class ProductsController {
   constructor(private productsService: ProductsSetvice) {}
 
   @Delete(':id')
-  public deeleteProduct(@Param('id', ParseIntPipe) id: string) {
-    return this.productsService.deeleteProduct(id);
+  public deleteProduct(@Param('id', ParseIntPipe) id: number) {
+    return this.productsService.deleteProduct(id);
   }
 
   @Put(':id')
   public updateProduct(
-    @Param('id', ParseIntPipe) id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body()
     body: UpdateProductDto,
   ) {
@@ -44,7 +44,7 @@ export class ProductsController {
   }
 
   @Get(':id')
-  public getProductById(@Param('id', ParseIntPipe) id: string) {
+  public getProductById(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.getProductById(id);
   }
 }

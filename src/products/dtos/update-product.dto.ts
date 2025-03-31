@@ -14,6 +14,10 @@ export class UpdateProductDto {
   @IsOptional()
   title?: string;
 
+  @IsOptional()
+  @IsString()
+  description: string;
+
   @IsNumber()
   @IsNotEmpty()
   @Min(2)

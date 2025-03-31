@@ -1,6 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateProductDto } from './dtos/update-product.dto';
 import { CreateProductDto } from './dtos/create-product.dto';
+import { Repository } from 'typeorm';
+import { Product } from './product.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 export interface IProduct {
   id: number;
@@ -10,50 +13,41 @@ export interface IProduct {
 
 @Injectable()
 export class ProductsSetvice {
-  private _products: IProduct[] = [
-    { id: 1, title: 'book_1', price: 10 },
-    { id: 2, title: 'book_2', price: 20 },
-    { id: 3, title: 'book_3', price: 30 },
-  ];
+  constructor(
+    @InjectRepository(Product)
+    private productsRepository: Repository<Product>,
+  ) {}
 
-  public deeleteProduct(id: string) {
-    const product = this._products.find((product) => product.id === +id);
-    if (!product) throw new NotFoundException('Product Not Found');
-
-    this._products = this._products.filter((product) => product.id !== +id);
-    return { Message: 'product deleted successfully' };
-  }
-
-  public updateProduct(id: string, updateProductDto: UpdateProductDto) {
-    const productIndex = this._products.findIndex(
-      (product) => product.id === +id,
-    );
-
-    if (productIndex === -1) throw new NotFoundException('Product Not Found');
-
-    this._products[productIndex] = {
-      ...this._products[productIndex],
-      ...updateProductDto,
-    };
-    return this._products[productIndex];
-  }
-
-  public createNewProduct(createProductDto: CreateProductDto) {
-    const newProduct = {
-      id: this._products.length + 1,
-      ...createProductDto,
-    };
-    this._products.push(newProduct);
-    return newProduct;
-  }
-
-  public getAllProducts() {
-    return this._products;
-  }
-
-  public getProductById(id: string) {
-    const product = this._products.find((product) => product.id === +id);
+  public async getOneBy(id: number) {
+    const product = await this.productsRepository.findOne({ where: { id } });
     if (!product) throw new NotFoundException('Product Not Found');
     return product;
+  }
+
+  public async createNewProduct(createProductDto: CreateProductDto) {
+    const newProduct = this.productsRepository.create(createProductDto);
+    return await this.productsRepository.save(newProduct);
+  }
+
+  public async getAllProducts() {
+    return await this.productsRepository.find();
+  }
+
+  public async getProductById(id: number) {
+    return await this.getOneBy(id);
+  }
+
+  public async updateProduct(id: number, updateProductDto: UpdateProductDto) {
+    let product = await this.getOneBy(id);
+
+    product = { ...product, ...updateProductDto };
+    return await this.productsRepository.save(product);
+  }
+
+  public async deleteProduct(id: number) {
+    await this.getOneBy(id);
+
+    await this.productsRepository.delete({ id: id });
+    return { Message: 'product deleted successfully' };
   }
 }
