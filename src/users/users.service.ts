@@ -1,72 +1,31 @@
+import { AuthService } from './auth.service';
 import { UserType } from './../utils/enums';
 import {
-  BadRequestException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { RegisterDto } from './dtos/register.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entitty';
 import { Repository } from 'typeorm';
-import * as bcryprt from 'bcryptjs';
-import { LoginDto } from './dtos/login.dto';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
 import { UpdateUserDto } from './dtos/update-users.dto';
+import { RegisterDto } from './dtos/register.dto';
+import { LoginDto } from './dtos/login.dto';
 
 @Injectable()
 export class UsersServices {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
-    private readonly jwtService: JwtService,
-    private readonly config: ConfigService,
+    private readonly authService: AuthService,
   ) {}
 
-  /**
-   * register users (create new users)
-   * @param registerDto data of the user
-   * @returns JWT (access token)
-   */
   public async register(registerDto: RegisterDto) {
-    const user = await this.usersRepository.findOne({
-      where: { email: registerDto.email },
-    });
-    if (user) throw new BadRequestException('User Already Exist');
-
-    const newUser = this.usersRepository.create({
-      ...registerDto,
-      password: await this.hashPassword(registerDto.password),
-    });
-    await this.usersRepository.save(newUser);
-
-    const accessToken = await this.generateJWT({
-      id: newUser.id,
-      userType: newUser.userType,
-    });
-    return { accessToken };
+    return await this.authService.register(registerDto);
   }
 
   public async login(loginDto: LoginDto) {
-    const user = await this.usersRepository.findOne({
-      where: { email: loginDto.email },
-    });
-    if (!user) throw new BadRequestException('invalid email or password');
-
-    const isPasswordCorrect = await bcryprt.compare(
-      loginDto.password,
-      user.password,
-    );
-
-    if (!isPasswordCorrect)
-      throw new BadRequestException('invalid email or password');
-
-    const accessToken = await this.generateJWT({
-      id: user.id,
-      userType: user.userType,
-    });
-    return { accessToken };
+    return await this.authService.login(loginDto);
   }
 
   public async getCurrentUser(id: number) {
@@ -87,7 +46,9 @@ export class UsersServices {
     if (user) {
       if (updateUserDto.username) user.username = updateUserDto.username;
       if (updateUserDto.password)
-        user.password = await this.hashPassword(updateUserDto.password);
+        user.password = await this.authService.hashPassword(
+          updateUserDto.password,
+        );
 
       return await this.usersRepository.save(user);
     }
@@ -106,17 +67,5 @@ export class UsersServices {
     throw new UnauthorizedException(
       'You Are Not Allowed To Perform This Action',
     );
-  }
-
-  private async generateJWT(payload: {
-    id: number;
-    userType: UserType;
-  }): Promise<string> {
-    return await this.jwtService.signAsync(payload);
-  }
-
-  private async hashPassword(password: string) {
-    const salt = await bcryprt.genSalt(10);
-    return await bcryprt.hash(password, salt);
   }
 }

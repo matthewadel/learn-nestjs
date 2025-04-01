@@ -36,7 +36,7 @@ export class UsersController {
 
   @Get('current-user')
   @UseGuards(AuthGuard)
-  public async getUserById(
+  public async getCurrentUser(
     @CurrentUser() payload: { id: number; userType: UserType },
   ) {
     const id: number = payload.id;

@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { Product } from 'src/products/product.entity';
 import { Review } from 'src/reviews/review.entity';
 import { UserType } from 'src/utils/enums';
@@ -22,6 +23,7 @@ export class User {
   email: string;
 
   @Column()
+  @Exclude()
   password: string;
 
   @Column({ default: false })
