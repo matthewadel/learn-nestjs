@@ -15,7 +15,7 @@ export class Review {
   id: number;
 
   @Column()
-  title: string;
+  comment: string;
 
   @CreateDateColumn({
     type: 'timestamp',
