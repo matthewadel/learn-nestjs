@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateProductDto } from './dtos/update-product.dto';
 import { CreateProductDto } from './dtos/create-product.dto';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { Product } from './product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersServices } from 'src/users/users.service';
@@ -43,10 +43,11 @@ export class ProductsSetvice {
     return await this.productsRepository.save(newProduct);
   }
 
-  public async getAllProducts() {
+  public async getAllProducts(title?: string) {
     return await this.productsRepository.find({
       relations: { user: true, reviews: true },
       order: { createdAt: 'DESC' },
+      where: { title: ILike(`%${title}%`) },
     });
   }
 
