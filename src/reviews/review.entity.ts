@@ -17,6 +17,9 @@ export class Review {
   @Column()
   comment: string;
 
+  @Column()
+  rating: number;
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
@@ -33,6 +36,6 @@ export class Review {
   @ManyToOne(() => Product, (product) => product.reviews)
   product: Product;
 
-  @ManyToOne(() => User, (user) => user.reviews)
+  @ManyToOne(() => User, (user) => user.reviews, { eager: true })
   user: User;
 }
