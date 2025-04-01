@@ -1,5 +1,9 @@
 import { UserType } from './../utils/enums';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { RegisterDto } from './dtos/register.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entitty';
@@ -7,6 +11,7 @@ import { Repository } from 'typeorm';
 import * as bcryprt from 'bcryptjs';
 import { LoginDto } from './dtos/login.dto';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersServices {
@@ -14,6 +19,7 @@ export class UsersServices {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     private readonly jwtService: JwtService,
+    private readonly config: ConfigService,
   ) {}
 
   /**
@@ -61,6 +67,18 @@ export class UsersServices {
       userType: user.userType,
     });
     return { accessToken };
+  }
+
+  public async getCurrentUser(id: number) {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+    });
+    if (!user) throw new NotFoundException('User Not Found');
+    return user;
+  }
+
+  public async getAllUsers() {
+    return this.usersRepository.find();
   }
 
   private async generateJWT(payload: {
