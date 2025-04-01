@@ -37,8 +37,12 @@ export class ReviewsService {
     return await this.reviewsRepository.save(review);
   }
 
-  public async getAllReviews() {
-    return await this.reviewsRepository.find({ order: { createdAt: 'DESC' } });
+  public async getAllReviews(page: number = 1, itemsPerPage: number = 10) {
+    return await this.reviewsRepository.find({
+      skip: itemsPerPage * (page - 1),
+      take: itemsPerPage,
+      order: { createdAt: 'DESC' },
+    });
   }
 
   public async updateReview(

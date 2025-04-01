@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.services';
@@ -35,8 +36,11 @@ export class ReviewsController {
   @Get()
   @Roles(UserType.ADMIN)
   @UseGuards(AuthRolesGuard)
-  public getAllReviews() {
-    return this.reviewsService.getAllReviews();
+  public getAllReviews(
+    @Query('page') page: number,
+    @Query('itemsPerPage') itemsPerPage: number,
+  ) {
+    return this.reviewsService.getAllReviews(page, itemsPerPage);
   }
 
   @Put(':reviewId')
