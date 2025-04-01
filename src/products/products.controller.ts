@@ -7,21 +7,30 @@ import {
   Put,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateProductDto } from './dtos/create-product.dto';
 import { UpdateProductDto } from './dtos/update-product.dto';
 import { ProductsSetvice } from './products.service';
+import { Roles } from 'src/users/decorators/user-role.decorator';
+import { AuthRolesGuard } from 'src/users/guards/auth-roles.guard';
+import { UserType } from 'src/utils/enums';
+import { CurrentUser } from 'src/users/decorators/current-user.decorator';
 
 @Controller('api/products')
 export class ProductsController {
   constructor(private productsService: ProductsSetvice) {}
 
   @Delete(':id')
+  @Roles(UserType.ADMIN)
+  @UseGuards(AuthRolesGuard)
   public deleteProduct(@Param('id', ParseIntPipe) id: number) {
     return this.productsService.deleteProduct(id);
   }
 
   @Put(':id')
+  @Roles(UserType.ADMIN)
+  @UseGuards(AuthRolesGuard)
   public updateProduct(
     @Param('id', ParseIntPipe) id: number,
     @Body()
@@ -31,11 +40,14 @@ export class ProductsController {
   }
 
   @Post()
+  @Roles(UserType.ADMIN)
+  @UseGuards(AuthRolesGuard)
   public createNewProduct(
     @Body()
     body: CreateProductDto,
+    @CurrentUser() payload: { id: number; userType: UserType },
   ) {
-    return this.productsService.createNewProduct(body);
+    return this.productsService.createNewProduct(body, payload.id);
   }
 
   @Get()
