@@ -3,6 +3,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { RegisterDto } from './dtos/register.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,6 +13,7 @@ import * as bcryprt from 'bcryptjs';
 import { LoginDto } from './dtos/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { UpdateUserDto } from './dtos/update-users.dto';
 
 @Injectable()
 export class UsersServices {
@@ -33,11 +35,9 @@ export class UsersServices {
     });
     if (user) throw new BadRequestException('User Already Exist');
 
-    const salt = await bcryprt.genSalt(10);
-    const hasedPassword = await bcryprt.hash(registerDto.password, salt);
     const newUser = this.usersRepository.create({
       ...registerDto,
-      password: hasedPassword,
+      password: await this.hashPassword(registerDto.password),
     });
     await this.usersRepository.save(newUser);
 
@@ -81,10 +81,42 @@ export class UsersServices {
     return this.usersRepository.find();
   }
 
+  public async updateUser(id: number, updateUserDto: UpdateUserDto) {
+    const user = await this.usersRepository.findOne({ where: { id } });
+
+    if (user) {
+      if (updateUserDto.username) user.username = updateUserDto.username;
+      if (updateUserDto.password)
+        user.password = await this.hashPassword(updateUserDto.password);
+
+      return await this.usersRepository.save(user);
+    }
+  }
+
+  public async deleteUser(
+    id: number,
+    payload: { id: number; userType: UserType },
+  ) {
+    const user = await this.getCurrentUser(id);
+
+    if (id === user.id || payload.userType === UserType.ADMIN) {
+      await this.usersRepository.delete({ id });
+      return { message: 'User Deleted Successfully' };
+    }
+    throw new UnauthorizedException(
+      'You Are Not Allowed To Perform This Action',
+    );
+  }
+
   private async generateJWT(payload: {
     id: number;
     userType: UserType;
   }): Promise<string> {
     return await this.jwtService.signAsync(payload);
+  }
+
+  private async hashPassword(password: string) {
+    const salt = await bcryprt.genSalt(10);
+    return await bcryprt.hash(password, salt);
   }
 }

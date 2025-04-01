@@ -2,10 +2,14 @@ import { RegisterDto } from './dtos/register.dto';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
+  Param,
+  ParseIntPipe,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { UsersServices } from './users.service';
@@ -13,6 +17,9 @@ import { LoginDto } from './dtos/login.dto';
 import { AuthGuard } from './guards/auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { UserType } from 'src/utils/enums';
+import { Roles } from './decorators/user-role.decorator';
+import { AuthRolesGuard } from './guards/auth-roles.guard';
+import { UpdateUserDto } from './dtos/update-users.dto';
 
 @Controller('api/users')
 export class UsersController {
@@ -37,7 +44,27 @@ export class UsersController {
   }
 
   @Get()
+  @Roles(UserType.ADMIN)
+  @UseGuards(AuthRolesGuard)
   public getAllUsers() {
     return this.userService.getAllUsers();
+  }
+
+  @Put()
+  @UseGuards(AuthGuard)
+  public async updateUser(
+    @CurrentUser() payload: { id: number; userType: UserType },
+    @Body() loginDto: UpdateUserDto,
+  ) {
+    return this.userService.updateUser(payload.id, loginDto);
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  public async deleteUser(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() payload: { id: number; userType: UserType },
+  ) {
+    return this.userService.deleteUser(id, payload);
   }
 }
