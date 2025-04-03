@@ -67,4 +67,9 @@ export class UsersController {
   ) {
     return this.userService.deleteUser(id, payload);
   }
+
+  // @Post('upload-image')
+  // public uploadProfileImage() {
+
+  // }
 }
