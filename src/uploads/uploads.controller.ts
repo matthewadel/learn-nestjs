@@ -10,11 +10,11 @@ import {
   UseInterceptors,
   Delete,
   NotFoundException,
+  UploadedFiles,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { unlinkSync } from 'fs';
-import { diskStorage } from 'multer';
 import { join } from 'path';
 import { AuthGuard } from 'src/users/guards/auth.guard';
 
@@ -22,23 +22,7 @@ import { AuthGuard } from 'src/users/guards/auth.guard';
 export class UploadsController {
   @Post()
   @UseGuards(AuthGuard)
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: 'images',
-        filename: (req, file, cb) => {
-          const prefix = `${Date.now()}-${Math.round(Math.random() * 1000000)}`;
-          const filename = `${prefix}-${file.originalname}`;
-          cb(null, filename);
-        },
-      }),
-      fileFilter: (req, file, cb) => {
-        if (file.mimetype.startsWith('image')) cb(null, true);
-        else cb(new BadRequestException('unsupported file format'), false);
-      },
-      limits: { fileSize: 1024 * 1024 }, // in bytes, 1 mb
-    }),
-  )
+  @UseInterceptors(FileInterceptor('file'))
   public uploadFile(
     @UploadedFile()
     file: Express.Multer.File,
@@ -48,6 +32,22 @@ export class UploadsController {
     return {
       Message: 'File Uploaded Successfully',
       path: file.path.replace('images', ''),
+    };
+  }
+
+  @Post('multiple-files')
+  @UseGuards(AuthGuard)
+  @UseInterceptors(FilesInterceptor('files'))
+  public uploadMultiplleFile(
+    @UploadedFiles()
+    files: Array<Express.Multer.File>,
+  ) {
+    if (!files || !files?.length)
+      throw new BadRequestException('No Files Provided');
+    console.log(files);
+    return {
+      Message: 'Files Uploaded Successfully',
+      paths: files.map((file) => file.path.replace('images', '')),
     };
   }
 
