@@ -7,6 +7,7 @@ import { RegisterDto } from './dtos/register.dto';
 import { User } from './user.entitty';
 import * as bcryprt from 'bcryptjs';
 import { UserType } from 'src/utils/enums';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -14,6 +15,7 @@ export class AuthService {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     private readonly jwtService: JwtService,
+    private mailService: MailService,
   ) {}
 
   /**
@@ -58,6 +60,9 @@ export class AuthService {
       id: user.id,
       userType: user.userType,
     });
+
+    // await this.mailService.sendEloginMail(user.email, user.username);
+
     return { accessToken };
   }
 

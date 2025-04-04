@@ -9,10 +9,12 @@ import { Review } from './reviews/review.entity';
 import { User } from './users/user.entitty';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { UploadsModule } from './uploads/uploads.module';
+import { MailModiule } from './mail/mail.module';
 
 @Module({
   imports: [
     ProductsModule,
+    MailModiule,
     UsersModule,
     ReviewsModule,
     UploadsModule,

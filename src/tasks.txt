@@ -4,9 +4,3 @@ with each new module created
 3- validate id inside each route in controller using ParseIntPipe for example with each id in Put, Delete and Get by id
 4- create _findOneBy private function and use it in findOne, update and remove functions
 5- implement paginate function inside the service and call this function in the controller inside getAll method
-
-
-
-
-finish from 28:42
-return back to free code camp to continue file upload, swagger, seeding and migration

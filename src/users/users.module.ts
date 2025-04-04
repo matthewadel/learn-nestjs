@@ -6,12 +6,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
+import { MailModiule } from 'src/mail/mail.module';
 
 @Module({
   controllers: [UsersController],
   providers: [UsersServices, AuthService],
   exports: [UsersServices],
   imports: [
+    MailModiule,
     TypeOrmModule.forFeature([User]),
     JwtModule.registerAsync({
       inject: [ConfigService],
