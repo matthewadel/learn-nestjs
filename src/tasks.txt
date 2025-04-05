@@ -6,6 +6,7 @@ with each new module created
 5- implement paginate function inside the service and call this function in the controller inside getAll method
 6- integrate helmet
 7- integrate swagger
+8- implement rate limiting for 10 requests for each user
 
 
 
