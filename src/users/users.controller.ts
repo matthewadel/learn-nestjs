@@ -68,8 +68,11 @@ export class UsersController {
     return this.userService.deleteUser(id, payload);
   }
 
-  // @Post('upload-image')
-  // public uploadProfileImage() {
-
-  // }
+  @Get('verify-email/:userId/:verificationToken')
+  public VerifyEmail(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Param('verificationToken') verificationToken: string,
+  ) {
+    this.userService.VerifyEmail(userId, verificationToken);
+  }
 }

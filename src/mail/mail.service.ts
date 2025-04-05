@@ -11,9 +11,24 @@ export class MailService {
       await this.mailerService.sendMail({
         to: email,
         from: `<no-reply@miso.com>`,
-        subject: 'verifiy your email',
+        subject: 'You logged in ',
         template: 'login',
         context: { email, username, today },
+      });
+    } catch (e) {
+      console.log(e);
+      throw new RequestTimeoutException('error sending verification mail');
+    }
+  }
+
+  public async sendVerificationMail(email: string, link: string) {
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        from: `<no-reply@miso.com>`,
+        subject: 'verifiy your email',
+        template: 'login',
+        context: { link },
       });
     } catch (e) {
       console.log(e);

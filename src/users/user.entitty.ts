@@ -29,6 +29,9 @@ export class User {
   @Column({ default: false })
   isAccountVertified: boolean;
 
+  @Column({ nullable: true })
+  verificationToken: string;
+
   @Column({ type: 'enum', enum: UserType, default: UserType.USER })
   userType: UserType;
 

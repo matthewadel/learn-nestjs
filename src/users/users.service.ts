@@ -68,4 +68,8 @@ export class UsersServices {
       'You Are Not Allowed To Perform This Action',
     );
   }
+
+  public async VerifyEmail(userId: number, verificationToken: string) {
+    return this.authService.verifyEmail(userId, verificationToken);
+  }
 }
