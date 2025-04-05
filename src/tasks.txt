@@ -8,7 +8,6 @@ with each new module created
 
 
 
-swagger
 security
 migration
 

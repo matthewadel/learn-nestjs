@@ -17,6 +17,7 @@ import { Roles } from 'src/users/decorators/user-role.decorator';
 import { AuthRolesGuard } from 'src/users/guards/auth-roles.guard';
 import { UserType } from 'src/utils/enums';
 import { CurrentUser } from 'src/users/decorators/current-user.decorator';
+import { ApiQuery } from '@nestjs/swagger';
 
 @Controller('api/products')
 export class ProductsController {
@@ -52,6 +53,12 @@ export class ProductsController {
   }
 
   @Get()
+  @ApiQuery({
+    name: 'title',
+    required: false,
+    type: 'string',
+    description: 'enter prodcuct title',
+  })
   public getAllProducts(@Query('title') title: string) {
     return this.productsService.getAllProducts(title);
   }
