@@ -35,4 +35,22 @@ export class MailService {
       throw new RequestTimeoutException('error sending verification mail');
     }
   }
+
+  public async sendResetPasswordTemplate(
+    email: string,
+    resetPasswordLink: string,
+  ) {
+    try {
+      await this.mailerService.sendMail({
+        to: email,
+        from: `<no-reply@miso.com>`,
+        subject: 'Reset Password',
+        template: 'login',
+        context: { link: resetPasswordLink },
+      });
+    } catch (e) {
+      console.log(e);
+      throw new RequestTimeoutException('error sending verification mail');
+    }
+  }
 }

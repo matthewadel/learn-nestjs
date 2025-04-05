@@ -32,6 +32,9 @@ export class User {
   @Column({ nullable: true })
   verificationToken: string;
 
+  @Column({ nullable: true })
+  resetPasswordToken: string;
+
   @Column({ type: 'enum', enum: UserType, default: UserType.USER })
   userType: UserType;
 

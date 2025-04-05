@@ -1,3 +1,4 @@
+import { ResetPasswordDto } from './dtos/reset-password.dto';
 import {
   BadRequestException,
   Injectable,
@@ -105,6 +106,38 @@ export class AuthService {
     user.verificationToken = '';
     await this.usersRepository.save(user);
     return { Message: 'your email has been verified successfully' };
+  }
+
+  public async sendResetPasswordLink(email: string) {
+    const user = await this.usersRepository.findOne({
+      where: { email },
+    });
+    if (!user) throw new NotFoundException('No User Found');
+
+    user.resetPasswordToken = randomBytes(32).toString('hex');
+    await this.usersRepository.save(user);
+
+    await this.mailService.sendResetPasswordTemplate(
+      email,
+      this.generateEmailLink(user.id, user.resetPasswordToken),
+    );
+
+    return { Message: 'please check your email to reset your password' };
+  }
+
+  public async resetPassword(resetPasswordDto: ResetPasswordDto) {
+    const user = await this.usersRepository.findOne({
+      where: { id: resetPasswordDto.userId },
+    });
+
+    if (!user) throw new NotFoundException('No User Found');
+    if (user.resetPasswordToken !== resetPasswordDto.resetPasswordToken)
+      throw new BadRequestException('invalid reset password token');
+
+    user.password = await this.hashPassword(resetPasswordDto.newPassword);
+    user.resetPasswordToken = '';
+    await this.usersRepository.save(user);
+    return { Message: 'your password has been reset successfully' };
   }
 
   private async generateJWT(payload: {

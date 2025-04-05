@@ -20,6 +20,7 @@ import { UserType } from 'src/utils/enums';
 import { Roles } from './decorators/user-role.decorator';
 import { AuthRolesGuard } from './guards/auth-roles.guard';
 import { UpdateUserDto } from './dtos/update-users.dto';
+import { ResetPasswordDto } from './dtos/reset-password.dto';
 
 @Controller('api/users')
 export class UsersController {
@@ -73,6 +74,16 @@ export class UsersController {
     @Param('userId', ParseIntPipe) userId: number,
     @Param('verificationToken') verificationToken: string,
   ) {
-    this.userService.VerifyEmail(userId, verificationToken);
+    return this.userService.VerifyEmail(userId, verificationToken);
+  }
+
+  @Post('fortget-password')
+  public forgetPassword(@Body() body: { email: string }) {
+    return this.userService.sendResetPasswordLink(body.email);
+  }
+
+  @Post('reset-password')
+  public resetPassword(@Body() body: ResetPasswordDto) {
+    return this.userService.resetPassword(body);
   }
 }

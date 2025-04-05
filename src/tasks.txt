@@ -4,3 +4,14 @@ with each new module created
 3- validate id inside each route in controller using ParseIntPipe for example with each id in Put, Delete and Get by id
 4- create _findOneBy private function and use it in findOne, update and remove functions
 5- implement paginate function inside the service and call this function in the controller inside getAll method
+
+
+
+
+swagger
+security
+migration
+
+seed
+migation not working (4:37:00)
+webpack

@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import { UpdateUserDto } from './dtos/update-users.dto';
 import { RegisterDto } from './dtos/register.dto';
 import { LoginDto } from './dtos/login.dto';
+import { ResetPasswordDto } from './dtos/reset-password.dto';
 
 @Injectable()
 export class UsersServices {
@@ -67,6 +68,13 @@ export class UsersServices {
     throw new UnauthorizedException(
       'You Are Not Allowed To Perform This Action',
     );
+  }
+
+  public async sendResetPasswordLink(email: string) {
+    return this.authService.sendResetPasswordLink(email);
+  }
+  public async resetPassword(resetPasswordDto: ResetPasswordDto) {
+    return this.authService.resetPassword(resetPasswordDto);
   }
 
   public async VerifyEmail(userId: number, verificationToken: string) {
